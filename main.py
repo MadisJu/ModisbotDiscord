@@ -19,7 +19,7 @@ def get_image():
     a = requests.get(link).text
     soup = BeautifulSoup(a, 'html.parser')
 
-    #ToDo if madis watches too many cat images there might be index out of range error for some reason (Error produced by line 23)
+    #ToDo if madis watches too many cat images tere might be index out of range error for some reason
     text = str(soup.find_all('img')[0])
     s = re.search('src="(.*)" title', text).group(1)
 
@@ -51,9 +51,10 @@ async def on_message(message):
         ch = message.channel
         catgirl.start()
 
-    if message.content == "stop":
+    if message.content == "stop" or message.content == "This nonsense needs to end!":
         ch = message.channel
         catgirl.cancel()
+        await message.channel.send("The catgirls have been imprisoned (end)")
 
     if message.content == "catgirl":
         await message.channel.send(embed=get_image())
