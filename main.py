@@ -19,7 +19,7 @@ def get_image():
     a = requests.get(link).text
     soup = BeautifulSoup(a, 'html.parser')
 
-    #ToDo if madis watches too many cat images there might be index out of range error for some reason (Error produced by row 23)
+    #ToDo if madis watches too many cat images there might be index out of range error for some reason (Error produced by line 23)
     text = str(soup.find_all('img')[0])
     s = re.search('src="(.*)" title', text).group(1)
 
