@@ -12,8 +12,6 @@ client = discord.Client(intents=discord.Intents.all())
 ch = None
 
 
-
-
 def get_image():
     link = "http://catgirldatabase.com/picture.php?/{}/category/1".format(random.randint(0, 4260))
     a = requests.get(link).text
@@ -43,8 +41,8 @@ async def on_message(message):
     if message.content == "Hello":
         await message.channel.send("Hello master " + message.author.nick)
 
-    if message.content == "modis":
-        await message.channel.send("https://images-ext-2.discordapp.net/external/MtBpNZXySNvNWM1Ssk_o2zpLrdyw_HPGuX7BVUFSyj0/https/cdn.weeb.sh/images/rkmBhAuD-.gif")
+    if message.content == "modis" or message.content == '@Modis':
+        await message.channel.send('https://media.discordapp.net/attachments/1033478386196156446/1033495265367306330/madis_hmm_gif.gif')
 
     if message.content == "start":
 
@@ -56,13 +54,14 @@ async def on_message(message):
         catgirl.cancel()
         await message.channel.send("The catgirls have been imprisoned (end)")
 
-    if message.content == "catgirl":
-        await message.channel.send(embed=get_image())
-        return
-
 @tasks.loop(seconds = 5)
 async def catgirl():
-    await ch.send(embed=get_image())
+    randomNumber = 0 #random.randint(0, 10) while not in tartu ylikool
+    if randomNumber == 0:
+        await ch.send(
+            'https://media.discordapp.net/attachments/1033478386196156446/1033495265367306330/madis_hmm_gif.gif')
+    else:
+        await ch.send(embed=get_image())
 
 
 
