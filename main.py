@@ -63,21 +63,23 @@ async def on_message(message):
         ch = message.channel
         catgirl.cancel()
         await message.channel.send("The catgirls have been imprisoned (end)")
+    try:
+        if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords:
+            ch = message.channel
+            oldMessage = message.content
+            newMessage = ''
+            for i in range(int(len(message.content))):
+                if i % 2 == 0:
+                    newMessage += oldMessage[i].lower()
+                else:
+                    newMessage += oldMessage[i].upper()
+            await message.channel.send(newMessage)
+    except:
+        await message.channel.send(":skull:")
 
-    if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords:
+    if message.content == "secret":
         ch = message.channel
-        oldMessage = message.content
-        newMessage = ''
-        for i in range(int(len(message.content))):
-            if i % 2  == 0:
-                newMessage += oldMessage[i].lower()
-            else:
-                newMessage += oldMessage[i].upper()
-        await message.channel.send(newMessage)
-
-    if specialWords[0] in message.content:
-        ch = message.channel
-        await message.channel.send('??? :thumbsdown:')
+        await message.channel.send('https://images-ext-2.discordapp.net/external/nFYzW-eGF3kfnrB4rjXhnQIolIcvImqwkVyZA6DG4Js/http/catgirldatabase.com/_data/i/upload/2020/07/06/20200706005308-520de81b-me.jpg')
 
 
 @tasks.loop(seconds=5)
