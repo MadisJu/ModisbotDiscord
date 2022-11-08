@@ -66,7 +66,14 @@ async def on_message(message):
 
     if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords:
         ch = message.channel
-        await message.channel.send('OK :thumbsup:')
+        oldMessage = message.content
+        newMessage = ''
+        for i in range(int(len(message.content))):
+            if i % 2  == 0:
+                newMessage += oldMessage[i].lower()
+            else:
+                newMessage += oldMessage[i].upper()
+        await message.channel.send(newMessage)
 
     if specialWords[0] in message.content:
         ch = message.channel
