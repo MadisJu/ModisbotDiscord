@@ -13,7 +13,7 @@ ch = None
 importantList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u'
     , 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-specialWords = ['cunt', 'stop', 'start']
+specialWords = ['cunt', 'stop', 'start', 'bot', 'secret']
 
 list2 = 'qwertyuiopasdfghjklzxcvbnmüõö ä1234567890!@#$%^&*()[]{};:'"<>,./?\|"
 
@@ -59,12 +59,15 @@ async def on_message(message):
         ch = message.channel
         await message.channel.send("LMAO *sToP*, there is no end to modis!")
 
+    if "bot" in message.content.lower():
+        ch = message.channel
+        await message.channel.send("Minust räägite?")
+
     if message.content == "This nonsense needs to end!":
         ch = message.channel
         catgirl.cancel()
-        await message.channel.send("The catgirls have been imprisoned (end)")
     try:
-        if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords:
+        if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords and 'bot' not in message.content and len(message.content) > 10:
             ch = message.channel
             oldMessage = message.content
             newMessage = ''
@@ -74,6 +77,8 @@ async def on_message(message):
                 else:
                     newMessage += oldMessage[i].upper()
             await message.channel.send(newMessage)
+        else:
+            await message.channel.send('OK :thumbsup:')
     except:
         await message.channel.send(":skull:")
 
