@@ -6,6 +6,7 @@ import requests
 import random
 import re
 from discord.ext import tasks
+import CatGirlRating
 
 client = discord.Client(intents=discord.Intents.all())
 ch = None
@@ -22,7 +23,7 @@ def get_image():
     a = requests.get(link).text
     soup = BeautifulSoup(a, 'html.parser')
 
-    # ToDo if madis watches too many cat images tere might be index out of range error for some reason
+    # ToDo if the page doesnt exsist it throws an error
     text = str(soup.find_all('img')[0])
     s = re.search('src="(.*)" title', text).group(1)
 
@@ -31,6 +32,26 @@ def get_image():
     x.set_image(url=url)
     x.set_footer(text=link)
     return x
+
+def get_image(id):
+    try:
+        link = "http://catgirldatabase.com/picture.php?/{}/category/1".format(id)
+        a = requests.get(link).text
+        soup = BeautifulSoup(a, 'html.parser')
+
+        # ToDo check get_image()
+        text = str(soup.find_all('img')[0])
+        s = re.search('src="(.*)" title', text).group(1)
+
+        url = "http://catgirldatabase.com/" + s
+        x = discord.Embed()
+        x.set_image(url=url)
+        x.set_footer(text=link)
+        return x
+    except:
+        x = discord.Embed()
+        x.title(text="None")
+        return x
 
 
 @client.event
@@ -46,6 +67,15 @@ async def on_message(message):
 
     if message.content == "Hello":
         await message.channel.send("Hello master " + message.author.nick)
+
+    if "rate" in message.content:
+        msg = str(message.content)
+        msg = msg.split(" ")
+        if msg[1].isalnum():
+            embed = get_image(msg[1])
+            await message.channel.send(embed = get_image(msg[1]))
+            await message.channel.send("Test this pic")
+            return
 
     if message.content == "modis" or message.content == '@Modis':
         await message.channel.send(
@@ -85,6 +115,8 @@ async def on_message(message):
     if message.content == "secret":
         ch = message.channel
         await message.channel.send('https://images-ext-2.discordapp.net/external/nFYzW-eGF3kfnrB4rjXhnQIolIcvImqwkVyZA6DG4Js/http/catgirldatabase.com/_data/i/upload/2020/07/06/20200706005308-520de81b-me.jpg')
+
+
 
 
 @tasks.loop(seconds=5)
