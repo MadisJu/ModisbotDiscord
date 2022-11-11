@@ -6,8 +6,6 @@ def AddRating(id, rating):
     j = 0
     for i in a:
         if int(i["id"]) == int(id):
-
-            print(a[j])
             x = a[j]["ratings"]
             x.append(rating)
             a[j]["ratings"] = x
@@ -17,7 +15,7 @@ def AddRating(id, rating):
                 return
         j+=1
 
-    data = {"id": id, "rating":[rating]}
+    data = {"id": id, "ratings":[rating]}
     a.append(data)
     with open("ratings.json", "w") as wf:
         json.dump(a, wf, sort_keys=True, indent=4)
