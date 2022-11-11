@@ -57,7 +57,7 @@ def get_image(id):
 def GetImgRating(id):
     emb = get_image(id)
     cg_d = CatGirl_Data.CatGirl(id)
-    emb.title = "The catgirl id: " + id
+    emb.title = "The catgirl id: " + str(id)
     emb.add_field(name="Rating",
                   value="Average: {} ({} / ratings) ".format(round(cg_d.AvgRating(), 1), len(cg_d.ratings)),
                   inline=True)
@@ -82,12 +82,13 @@ async def on_message(message):
     if "!getrate" in message.content:
         msg = str(message.content)
         msg = msg.split(";")
-        if len(msg < 1) and "" not in msg:
+        if len(msg) > 1 and "" not in msg:
             if msg[1].isalnum():
                 id = msg[1]
                 await message.channel.send(embed=GetImgRating(id))
                 return
 
+    #SHould do something with this later:D
     if "!rate" in message.content:
         msg = str(message.content)
         msg = msg.split(";")
@@ -95,13 +96,13 @@ async def on_message(message):
         if len(msg) > 2 and "" not in msg:
             if msg[1].isalnum() and msg[2].isalnum():
                 #clamp rating to 1-5
-                print("poop")
                 msg[2] = int(msg[2])
                 msg[2] = max(min(msg[2], 5), 1)
                 #Actually add the rating now
                 CatGirlRating.AddRating(int(msg[1]), msg[2])
                 await message.channel.send(embed=GetImgRating(msg[1]))
                 return
+
 
 
     if message.content == "modis" or message.content == '@Modis':
@@ -112,17 +113,20 @@ async def on_message(message):
         ch = message.channel
         catgirl.start()
 
+    if message.content == "boobs":
+        await discord.Thread.send(content= "ass")
+        return
+
     if message.content == "stop":
         ch = message.channel
-        await message.channel.send("LMAO *sToP*, there is no end to modis!")
+        catgirl.cancel()
 
+
+
+    #Shitpost
     if "bot" in message.content.lower():
         ch = message.channel
         await message.channel.send("Minust räägite?")
-
-    if message.content == "This nonsense needs to end!":
-        ch = message.channel
-        catgirl.cancel()
     try:
         if message.content[int(len(message.content)/2)].lower() in list2 and not message.content in specialWords and 'bot' not in message.content and len(message.content) > 10:
             ch = message.channel
