@@ -1,16 +1,31 @@
 import discord
-import os
-import time
 from bs4 import BeautifulSoup
 import requests
 import random
 import re
 from discord.ext import tasks
+from discord.ext import commands
 import CatGirlRating
 import CatGirl_Data
 
-client = discord.Client(intents=discord.Intents.all())
+
 ch = None
+
+#New stuff
+class Bot(commands.Bot):
+    def __init__(self):
+        intents = discord.Intents.all()
+        intents.message_content = True
+
+        super().__init__(command_prefix='!', intents=intents)
+
+    async def on_ready(self):
+        print(f'Logged in as {self.user} (ID: {self.user.id})')
+        print('------')
+
+#Stuff
+
+bot = Bot()
 
 importantList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u'
     , 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
@@ -64,46 +79,80 @@ def GetImgRating(id):
     emb.add_field(name="Comments", value=cg_d.comments, inline=True)
     return emb
 
+class View(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        value = None
+    @discord.ui.button(label="1", style=discord.ButtonStyle.green)
+    async def rate(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("ok")
 
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    @discord.ui.button(label="2", style=discord.ButtonStyle.green)
+    async def rate(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("ok")
 
+    @discord.ui.button(label="3", style=discord.ButtonStyle.green)
+    async def rate(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("ok")
 
-@client.event
-async def on_message(message):
-    global ch, loopTime
-    if message.author == client.user:
+    @discord.ui.button(label="4", style=discord.ButtonStyle.green)
+    async def rate(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("ok")
+
+    @discord.ui.button(label="5", style=discord.ButtonStyle.green)
+    async def rate(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("ok")
+
+@bot.command()
+async def ask(ctx):
+    view = View()
+    await ctx.send("buttonhole", view=view)
+    await view.wait()
+
+@bot.command()
+async def getrate(ctx, id):
+        await ctx.channel.send(embed=GetImgRating(id))
         return
 
-    if message.content == "Hello":
+@bot.command()
+async def rate(ctx, id, rating):
+        rating = max(min(int(rating), 5), 1)
+        #Actually add the rating now
+        CatGirlRating.AddRating(id, rating)
+        await ctx.channel.send(embed=GetImgRating(id))
+        return
+
+@bot.event
+async def on_message(message):
+    if "hello" in str(message.content):
         await message.channel.send("Hello master " + message.author.nick)
+        return
 
-    if "!getrate" in message.content:
-        msg = str(message.content)
-        msg = msg.split(";")
-        if len(msg) > 1 and "" not in msg:
-            if msg[1].isalnum():
-                id = msg[1]
-                await message.channel.send(embed=GetImgRating(id))
-                return
+@bot.command
+async def start(ctx):
+    ch = ctx.channel
+    catgirl.start()
 
-    #SHould do something with this later:D
-    if "!rate" in message.content:
-        msg = str(message.content)
-        msg = msg.split(";")
-        print(msg)
-        if len(msg) > 2 and "" not in msg:
-            if msg[1].isalnum() and msg[2].isalnum():
-                #clamp rating to 1-5
-                msg[2] = int(msg[2])
-                msg[2] = max(min(msg[2], 5), 1)
-                #Actually add the rating now
-                CatGirlRating.AddRating(int(msg[1]), msg[2])
-                await message.channel.send(embed=GetImgRating(msg[1]))
-                return
+@bot.command
+async def stop(ctx):
+    ch = ctx.channel
+    catgirl.cancel()
+
+@bot.command
+async def secret(ctx):
+    await ctx.channel.send(
+        'https://images-ext-2.discordapp.net/external/nFYzW-eGF3kfnrB4rjXhnQIolIcvImqwkVyZA6DG4Js/http/catgirldatabase.com/_data/i/upload/2020/07/06/20200706005308-520de81b-me.jpg')
 
 
+"""
+@bot.event
+async def on_message(message):
+    global ch, loopTime
+    if message.author == bot.user:
+        return
+
+    if message.content == "!Hello":
+        await ask()
 
     if message.content == "modis" or message.content == '@Modis':
         await message.channel.send(
@@ -113,14 +162,9 @@ async def on_message(message):
         ch = message.channel
         catgirl.start()
 
-    if message.content == "boobs":
-        await discord.Thread.send(content= "ass")
-        return
-
     if message.content == "stop":
         ch = message.channel
         catgirl.cancel()
-
 
 
     #Shitpost
@@ -144,12 +188,10 @@ async def on_message(message):
         await message.channel.send(":skull:")
 
     if message.content == "secret":
-        ch = message.channel
-        await message.channel.send('https://images-ext-2.discordapp.net/external/nFYzW-eGF3kfnrB4rjXhnQIolIcvImqwkVyZA6DG4Js/http/catgirldatabase.com/_data/i/upload/2020/07/06/20200706005308-520de81b-me.jpg')
+        ch = message.channel;
+        """
 
-
-
-
+#Catgirls every 5 seconds
 @tasks.loop(seconds=5)
 async def catgirl():
     randomNumber = 1  # random.randint(0, 10) while not in tartu ylikool
@@ -159,4 +201,6 @@ async def catgirl():
         await ch.send(embed=GetImgRating(random.randint(0, 4260)))
 
 
-client.run("MzUxMzM2MTk0OTY3MDc2ODY0.GdvZD6.EeU8chS1boc6_CtZyrweXua__K1c_iC6Am5FuE")
+
+
+bot.run("MzUxMzM2MTk0OTY3MDc2ODY0.GdvZD6.EeU8chS1boc6_CtZyrweXua__K1c_iC6Am5FuE")

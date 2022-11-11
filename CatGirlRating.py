@@ -50,4 +50,4 @@ def AddComment(id, comment):
 def Test(idk):
     f = open("ratings.json", "r")
 
-print(ReadRating(1964))
+AddRating(3328, 4.55)
