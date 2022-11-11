@@ -82,7 +82,7 @@ async def on_message(message):
     if "!getrate" in message.content:
         msg = str(message.content)
         msg = msg.split(";")
-        if len(msg < 1):
+        if len(msg < 1) and "" not in msg:
             if msg[1].isalnum():
                 id = msg[1]
                 await message.channel.send(embed=GetImgRating(id))
@@ -92,7 +92,7 @@ async def on_message(message):
         msg = str(message.content)
         msg = msg.split(";")
         print(msg)
-        if len(msg) > 2:
+        if len(msg) > 2 and "" not in msg:
             if msg[1].isalnum() and msg[2].isalnum():
                 #clamp rating to 1-5
                 print("poop")
