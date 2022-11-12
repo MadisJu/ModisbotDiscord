@@ -1,12 +1,14 @@
-import discord
-from bs4 import BeautifulSoup
-import requests
 import random
 import re
-from discord.ext import tasks
-from discord.ext import commands
-import CatGirlRating
+
+import discord
+import requests
+from bs4 import BeautifulSoup
+from discord.ext import commands, tasks
+
 import CatGirl_Data
+import CatGirlRating
+
 
 #New stuff
 class Bot(commands.Bot):
@@ -172,6 +174,11 @@ async def stop(ctx):
 async def secret(ctx):
     await ctx.channel.send(
         'https://images-ext-2.discordapp.net/external/nFYzW-eGF3kfnrB4rjXhnQIolIcvImqwkVyZA6DG4Js/http/catgirldatabase.com/_data/i/upload/2020/07/06/20200706005308-520de81b-me.jpg')
+    return
+@bot.command()
+async def modis(ctx):
+    await ctx.channel.send(
+        'https://media.discordapp.net/attachments/1033478386196156446/1033495265367306330/madis_hmm_gif.gif')
     return
 
 """
