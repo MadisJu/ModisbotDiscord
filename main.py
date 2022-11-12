@@ -1,3 +1,4 @@
+import asyncio
 import random
 import re
 
@@ -5,7 +6,7 @@ import discord
 import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-
+from discord import app_commands
 import CatGirl_Data
 import CatGirlRating
 
@@ -116,6 +117,29 @@ class RatingView(discord.ui.View):
         self.clear_items()
         self.stop()
 
+class CommentModal(discord.ui.Modal, title="Enter your comment"):
+    text = discord.ui.TextInput(label="Comment")
+    async def on_submit(self, interaction: discord.Interaction):
+        self.text = str(self.text)
+        await interaction.response.send_message("Comment added!")
+
+
+class CommentView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=50)
+        self.value = None
+
+    @discord.ui.button(label="Press here to write a comment", style=discord.ButtonStyle.green)
+    async def rate1(self, interaction: discord.Interaction, button: discord.ui.Button):
+        cmodal = CommentModal()
+
+        await interaction.response.send_modal(cmodal)
+        await cmodal.wait()
+        print(str(cmodal.text))
+        self.value = cmodal.text
+        self.stop()
+
+
 @bot.command()
 async def ask(ctx):
     view = RatingView()
@@ -124,7 +148,26 @@ async def ask(ctx):
 
 @bot.command()
 async def getrate(ctx, id):
-    await ctx.channel.send(embed=GetImgRating(id))
+    msg = await ctx.channel.send(embed=GetImgRating(id))
+    thread = await msg.create_thread(name = id)
+    cg = CatGirl_Data.CatGirl(id)
+    for cmt in cg.comments:
+        await thread.send(cmt)
+    await msg.delete(delay = 20)
+    await ctx.message.delete()
+    await asyncio.sleep(20)
+    await thread.delete()
+    return
+
+@bot.command()
+async def comment(ctx, id : int):
+
+    cview = CommentView()
+    await ctx.channel.send(embed=GetImgRating(id), view= cview)
+    await cview.wait()
+    print(cview.value)
+    if cview.value != None:
+        CatGirlRating.AddComment(id, "{} > {}".format(ctx.author.name, str(cview.value)))
     return
 
 @bot.command()
@@ -158,6 +201,7 @@ async def RateCommand(ch, id):
         await ch.send("You have rated this catgirl: ({}/5)".format(rating))
     else:
         await ch.send("Timout")
+
     return
 
 @bot.command()
@@ -180,6 +224,8 @@ async def modis(ctx):
     await ctx.channel.send(
         'https://media.discordapp.net/attachments/1033478386196156446/1033495265367306330/madis_hmm_gif.gif')
     return
+
+
 
 """
 @bot.event
