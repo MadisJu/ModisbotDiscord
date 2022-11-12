@@ -188,9 +188,16 @@ async def rate(ctx, id):
     return
 
 async def RateCommand(ch, id):
-    await ch.send(embed=GetImgRating(id))
-    btns = RatingView(timeout= 10)
+    msg = await ch.send(embed=GetImgRating(id))
+    thread = await msg.create_thread(name= id)
+
+    btns = RatingView(timeout= 20)
     output = await ch.send("Rate this catgirl", view=btns)
+
+    cg = CatGirl_Data.CatGirl(id)
+    for cmt in cg.comments:
+        await thread.send(cmt)
+
     await btns.wait()
     rating = btns.value
     await output.delete()
@@ -198,19 +205,23 @@ async def RateCommand(ch, id):
         rating = max(min(int(rating), 5), 1)
         #Actually add the rating now
         CatGirlRating.AddRating(id, rating)
-        await ch.send("You have rated this catgirl: ({}/5)".format(rating))
+        await msg.delete(delay=20)
+        await thread.delete()
     else:
-        await ch.send("Timout")
+        await msg.delete(delay=20)
+        await thread.delete()
 
     return
 
 @bot.command()
 async def start(ctx):
+    await ctx.message.delete()
     bot.ch = ctx.channel
     catgirl.start()
 
 @bot.command()
 async def stop(ctx):
+    await ctx.message.delete()
     bot.ch = ctx.channel
     catgirl.cancel()
 
