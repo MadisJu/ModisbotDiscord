@@ -79,32 +79,39 @@ def GetImgRating(id):
     return emb
 
 class RatingView(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        value = None
+    def __init__(self, timeout):
+        super().__init__(timeout=timeout)
+        self.value = None
+        self.response = None
+
     @discord.ui.button(label="1", style=discord.ButtonStyle.green)
     async def rate1(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = 1
+        self.clear_items()
         self.stop()
 
     @discord.ui.button(label="2", style=discord.ButtonStyle.green)
     async def rate2(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = 2
+        self.clear_items()
         self.stop()
 
     @discord.ui.button(label="3", style=discord.ButtonStyle.green)
     async def rate3(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = 3
+        self.clear_items()
         self.stop()
 
     @discord.ui.button(label="4", style=discord.ButtonStyle.green)
     async def rate4(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = 4
+        self.clear_items()
         self.stop()
 
     @discord.ui.button(label="5", style=discord.ButtonStyle.green)
     async def rate5(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = 5
+        self.clear_items()
         self.stop()
 
 @bot.command()
@@ -115,21 +122,40 @@ async def ask(ctx):
 
 @bot.command()
 async def getrate(ctx, id):
-    print("butt")
     await ctx.channel.send(embed=GetImgRating(id))
     return
 
 @bot.command()
 async def rate(ctx, id):
     await ctx.channel.send(embed=GetImgRating(id))
-    btns = RatingView()
-    await ctx.channel.send("Rate this catgirl", view=btns)
+    btns = RatingView(timeout= 10)
+    output = await ctx.channel.send("Rate this catgirl", view=btns)
     await btns.wait()
     rating = btns.value
-    rating = max(min(int(rating), 5), 1)
-    #Actually add the rating now
-    CatGirlRating.AddRating(id, rating)
-    await ctx.channel.send("You have rated this catgirl: ({}/5)".format(rating))
+    await output.delete()
+    if rating != None:
+        rating = max(min(int(rating), 5), 1)
+        #Actually add the rating now
+        CatGirlRating.AddRating(id, rating)
+        await ctx.channel.send("You have rated this catgirl: ({}/5)".format(rating))
+    else:
+        await ctx.channel.send("Timout")
+    return
+
+async def RateCommand(ch, id):
+    await ch.send(embed=GetImgRating(id))
+    btns = RatingView(timeout= 10)
+    output = await ch.send("Rate this catgirl", view=btns)
+    await btns.wait()
+    rating = btns.value
+    await output.delete()
+    if rating != None:
+        rating = max(min(int(rating), 5), 1)
+        #Actually add the rating now
+        CatGirlRating.AddRating(id, rating)
+        await ch.send("You have rated this catgirl: ({}/5)".format(rating))
+    else:
+        await ch.send("Timout")
     return
 
 @bot.command()
@@ -202,7 +228,7 @@ async def catgirl():
     if randomNumber == 0:
         await bot.ch.send('https://media.discordapp.net/attachments/1033478386196156446/1033495265367306330/madis_hmm_gif.gif')
     else:
-        await bot.ch.send(embed=GetImgRating(random.randint(0, 4260)))
+        await RateCommand(bot.ch, random.randint(0, 4260))
 
 
 
