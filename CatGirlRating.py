@@ -49,5 +49,3 @@ def AddComment(id, comment):
 
 def Test(idk):
     f = open("ratings.json", "r")
-
-AddRating(3328, 4.55)
