@@ -1,4 +1,5 @@
 import asyncio
+import os
 import random
 import re
 
@@ -294,7 +295,4 @@ async def catgirl():
     else:
         await RateCommand(bot.ch, random.randint(0, 4260))
 
-
-
-
-bot.run("MzUxMzM2MTk0OTY3MDc2ODY0.GdvZD6.EeU8chS1boc6_CtZyrweXua__K1c_iC6Am5FuE")
+bot.run(os.environ["MODISBOT"])
