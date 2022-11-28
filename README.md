@@ -7,6 +7,6 @@ It will ask for admin privileges because i did not know which privileges to ask 
 The commands for the bot are following: 
 1. !start - Will start sending cat pictures for you to rate every 10 seconds or so.
 2. !stop - will stop the automatic picture sending.
-3. !getrate <id> will get you the rating of the cat of the provided id.
-4. !rate <id> will let you rate an image.
-5. !comment <id> will let you add a comment to an image.
+3. !getrate [id] will get you the rating of the cat of the provided id.
+4. !rate [id] will let you rate an image.
+5. !comment [id] will let you add a comment to an image.
